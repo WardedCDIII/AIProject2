@@ -1,12 +1,15 @@
 import sys
 
 class Game:
-    def __init__(self):
-        self.board = [[0 for i in range(7)] for ii in range(6)]
+    def __init__(self,board=0):
+        if board == 0:
+            self.board = [[0 for i in range(7)] for ii in range(6)]
+        else:
+            self.board = board
         self.next_player = 1
         self.cpu = 2
-        self.scores = [0,0]
-        self.calc_score()
+        s = self.calc_score()
+        self.scores = [s[0],s[1]]
     def __str__(self):
         s = ""
         for row in range(len(self.board)):
@@ -23,25 +26,26 @@ class Game:
             if row.count(0) > 0:
                 return False
         return True
-    def calc_score(self):
-        board = self.board
+    def calc_score(self,board=self.board):
+        tempscores = [0,0]
         #horizontal
         for r in range(len(self.board)):
             for c in range(3,len(self.board[r])):
                 if (board[r][c] == board[r][c-1] == board[r][c-2] == board[r][c-3]) and board[r][c] != 0:
-                    self.scores[board[r][c]-1] += 1
+                    tempscores[board[r][c]-1] += 1
         #vertical
         for r in range(3,len(self.board)):
             for c in range(len(self.board[r])):
                 if (board[r][c] == board[r-1][c] == board[r-2][c] == board[r-3][c]) and board[r][c] != 0:
-                    self.scores[board[r][c]-1] += 1
+                    tempscores[board[r][c]-1] += 1
         #diagonal
         for r in range(len(self.board)-3):
             for c in range(len(self.board[r])-3):
                 if (board[r][c] == board[r+1][c+1] == board[r+2][c+2] == board[r+3][c+3]) and board[r][c] != 0:
-                    self.scores[board[r][c]-1] += 1
+                    tempscores[board[r][c]-1] += 1
                 if (board[r+3][c] == board[r+2][c+1] == board[r+1][c+2] == board[r][c+3]) and board[r+3][c] != 0:
-                    self.scores[board[r][c]-1] += 1
+                    tempscores[board[r][c]-1] += 1
+        return tempscores
     def get_open_space(self,col):
         try:
             for r in range(len(self.board)-1,0,-1):
@@ -58,9 +62,12 @@ class Game:
     def move(self,col):
         self.board[self.get_open_space(col)][col] = self.next_player
         self.next_player = ((self.next_player+2) % 2) + 1
+        s = self.calc_score()
+        self.scores = [s[0],s[1]]
 
-def computer_move(player,board,depth):
-    pass
+def minimax(node,depth,maximizingPlayer):
+    if depth == 0 or node:
+        return 
 
 ## MAIN ##
 #Open input file if exists
